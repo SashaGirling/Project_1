@@ -1,12 +1,12 @@
 # Project 1 Read Me file 
 ## description of queries and visualizations
  
-Link to tables and charts in Google Sheets:
-https://docs.google.com/spreadsheets/d/1HEe5ZN6mGIPQ_SKQTxWAWoNcEbMfXXSegHDtj3MaxFE/edit?usp=sharing
- 
 For this project I was provided 4 data sets from a mobile game company, spanning 365 days of user data including  number of players who joined,  player location, game play, in-game purchases and frequency of game play. I took a marketing and operations perspective on my analysis, where I wanted to demonstrate location specific outliers in the data and any spikes in retention rates as well as the overall rolling retention rates, based on players who played a game within 30 days of joining. 
 
 I used SQL to aggregate the data and then Google Sheets to analyze the tables created and visualize my findings. 
+
+Link to tables and charts in Google Sheets:
+https://docs.google.com/spreadsheets/d/1HEe5ZN6mGIPQ_SKQTxWAWoNcEbMfXXSegHDtj3MaxFE/edit?usp=sharing
  
 ## Query 1
 Description 
@@ -29,8 +29,12 @@ Visualization
 Before preparing the visualization I excluded the last 30 days of data as there was no retentional info provided, I didn’t want these 30 days to skew the analysis. 
  
 I created two line charts from this table, one to visualize the players who joined each day and the number of players retained, based on 30 day rolling retention and the second chart demonstrating the 30 day fractional retention over 335 days.
+
+![Chart 1](chart_1.png)
  
 In chart one you can see that the visualization doesn’t point out any specific patterns day over day for players joined and retained, the retained numbers rise and fall along with the total players who joined. The trendline for both metrics are flat, retained number sits at 84 and players joined at 122.
+
+![Chart 2](chart_2.png)
  
 In chart two the fractional retention trendline does start to dip slightly near the end of the 335 day however, this could be  explained by not having all of the player data past 365 days. Again, there are no trends or outliers that seem to stand out, the trendline sits around 69 consistently. 
  
@@ -47,6 +51,8 @@ For this second analysis I used similar queries that I utilized in the first que
  
 Visualization
 For this table visualization I used a bar chart to show the total average in-game spend, total players joined and total players retained, grouped by location. 
+
+![Chart 3](chart_3.png)
  
 In chart 3 the most interesting thing that is demonstrated across all locations is that the numbers remain flat, no significant differences can be seen. This is particularly interesting as you might assume that there is a region where the game might be more or less popular and therefore you might see a lower or higher in-game spend. The trendline for in-game spends is $24,394, for players joined 6,741 and players retained 4,603.
  
@@ -60,6 +66,8 @@ Approach
 I used a similar structure to query 1 and again, joined all four tables available, keeping the group by clauses as player_id and then day joined. In regards to the price, in the first subquery I sumed the price as total_spent, then averaged the spend and finally rounded to 2. 
  
 Visualization
+
+![Chart 4](chart_4.png)
  
 Perhaps the most interesting visualization and finding, in chart 4 you can see that the average in-game spend per player increases significantly by players who joined later in the game lifecycle. This means that of those players that had less time in the game spent more than the players who joined early on. I would suggest to the mobile game marketing and operations team to look closely at why this increase in player spends might be so they can continue to encourage in-game spends. I would encourage them to add in-game spends to their KPIs as well as player retention. 
  
