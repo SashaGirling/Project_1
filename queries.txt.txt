@@ -1,0 +1,152 @@
+
+
+Project 1 
+Query 1
+--Create a table with date joined, total number of players joined per day, total players retained and fractional retention
+SELECT
+  date_joined,-- day in question
+  total_players, -- total players joined per day
+  total_retained, --total players retained from those joined
+  ROUND((total_retained / total_players*100), 2) AS percentage --Fractional retention
+ 
+FROM (
+  SELECT
+    date_joined,
+    COUNT(player ) AS total_players,--counting total players by date joined
+    SUM (retained) AS total_retained --Suming the players who returned a 1 in the case statement 
+  
+  FROM (
+    SELECT
+      joined AS date_joined,
+      player_id AS player,
+      CASE
+        WHEN last_game - joined >30 THEN 1 --finding players who were retained, played a game within 30 days of joining
+      ELSE
+      0 --will return 0 for players outside 30 days
+    END
+      AS retained
+    
+    FROM (
+      SELECT
+        joined, -- date players joined 1-365
+        p.player_id, --unique player id
+        MAX(day) AS last_game --Because some players played multiple games, will retunr the last game they played
+      FROM
+        `juno2110.gamecodata.matches_info` AS m -- contains match info, needed to find retention 
+      JOIN
+        `juno2110.gamecodata.player_info` AS p --contains player info including join date
+      ON
+        m.player_id = p.player_id
+      GROUP BY
+        p.player_id, joined)) --group by unique player id to remove duplicate rows and joined day to get closer to retention numbers
+  
+  GROUP BY
+    date_joined) -- group by date joined to return the total number of players and retention per day
+ 
+Query 2
+ 
+--Look at the retained rates and average purchases per geographic area
+ 
+SELECT
+  location, -- location OF player total_players,
+  total_players, -- total players retained per location 
+  total_retained,  -- average retained per location
+  ROUND((avg_paid),2) AS paid,--average IN-game spend per player
+ ROUND((100*total_retained / total_players),2) AS perc_retained,--fractional retention
+  
+FROM (
+  SELECT
+    location,
+    COUNT(player ) AS total_players, --total players
+    SUM (retained) AS total_retained,  --count the plays who returned a 1 in the case statement
+    AVG (paid) AS avg_paid -- average in-game spend per player
+  FROM (
+    SELECT
+      joined AS date_joined,
+      player_id AS player,
+      location,
+      price AS paid,
+      CASE
+        WHEN last_game - joined >30 THEN 1 --finding players who were retained, played a game WITHIN 30 days OF joining
+      ELSE
+      0 --will return 0 FOR players outside the 30 day retention
+    END
+      AS retained --create column 'retained'
+    FROM (
+      SELECT
+        MIN(joined) AS joined,  --day players joined 
+        p.player_id, -- unique player id 
+        location, -- location OF players 
+        MAX(m.day) AS last_game, -- players play multiple games,will return last game they played 
+        SUM (price) AS price -- sum OF IN-game spends per player
+      FROM
+        `juno2110.gamecodata.matches_info` AS m --contains match info for game plays
+      JOIN
+        `juno2110.gamecodata.player_info` AS p --contains player info including join day and location
+      ON
+        m.player_id = p.player_id
+      JOIN
+        `juno2110.gamecodata.purchase_info` AS b --contains items purchased by each unique player
+      ON
+        p.player_id = b.player_id
+      JOIN
+        `juno2110.gamecodata.item_info` AS i --contains the cost per item for in game purchases
+      ON
+        b.item_id = i.item_id -- join these tables to find player in game spend
+      
+      GROUP BY
+        p.player_id,
+        location)) --group by unique player id to remove duplicate rows then aggregate by location
+ 
+  GROUP BY
+    location ) --group all columns BY location
+
+Query 3
+  ----ADD TO the daily retention table,average IN-game spends per player
+SELECT
+  date_joined, --day in question
+  total_players, --total players joined on day
+  total_retained, --number of players retained of those joined
+  ROUND((avg_spend), 2) AS avg_spend, --Average in-game spend per player 
+  ROUND((total_retained / total_players*100), 2) AS percentage -- fractional retention
+FROM (
+  SELECT
+    date_joined,
+    COUNT(player ) AS total_players, -- count of players joined on day
+    SUM (retained) AS total_retained, --Suming the players who returned a 1 in the case statement 
+    AVG(spent) AS avg_spend --Average in-game spend per player
+  FROM (
+    SELECT
+      joined AS date_joined,
+      player_id AS player,
+      total_spent AS spent,
+      CASE
+        WHEN last_game - joined >30 THEN 1 --finding players who were retained, played a game within 30 days of joining
+      ELSE
+      0 --will return 0 for players outside 30 days
+    END
+      AS retained
+    FROM (
+      SELECT
+        MIN(joined) AS joined,--Day players joined 1 - 365
+        p.player_id, --unique player id
+        MAX(m.day) AS last_game, --some players played multiple games, will return the last game they played
+        SUM(i.price) AS total_spent --Sum of the total in-game spends per player
+      FROM
+        `juno2110.gamecodata.matches_info` AS m -- contains match info, needed to find retention 
+      JOIN
+        `juno2110.gamecodata.player_info` AS p  --contains player info including join date
+      ON 
+        m.player_id = p.player_id --group by unique player id to remove duplicate rows and joined day to get closer to retention numbers
+      JOIN
+        `juno2110.gamecodata.purchase_info` AS b
+      ON
+        p.player_id = b.player_id --contains items purchased by each unique player
+      JOIN
+        `juno2110.gamecodata.item_info` AS i --contains the cost per item for in game purchases
+      ON
+        b.item_id = i.item_id
+      GROUP BY
+        p.player_id)) -- grouped by player to find last game and spends per player
+  GROUP BY
+    date_joined) -- Grouped by day to look at spends and retention per day
