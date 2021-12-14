@@ -7,6 +7,9 @@ I used SQL to aggregate the data and then Google Sheets to analyze the tables cr
 
 Link to tables and charts in Google Sheets:
 https://docs.google.com/spreadsheets/d/1HEe5ZN6mGIPQ_SKQTxWAWoNcEbMfXXSegHDtj3MaxFE/edit?usp=sharing
+
+Direct link to queries: 
+https://github.com/SashaGirling/Retenetion-and-Churn-SQL-/blob/11e98ccdf59a9220468f1a69ab6eab85ffbd133c/queries.txt.txt
  
 ## Query 1
 Description 
