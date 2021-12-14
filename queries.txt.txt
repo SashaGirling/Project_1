@@ -30,7 +30,7 @@ FROM (
       SELECT
         joined, -- date players joined 1-365
         p.player_id, --unique player id
-        MAX(day) AS last_game --Because some players played multiple games, will retunr the last game they played
+        MAX(day) AS last_game --Because some players played multiple games, will return the last game they played
       FROM
         `juno2110.gamecodata.matches_info` AS m -- contains match info, needed to find retention 
       JOIN
@@ -48,10 +48,10 @@ Query 2
 --Look at the retained rates and average purchases per geographic area
  
 SELECT
-  location, -- location OF player total_players,
+  location, -- location of player total_players,
   total_players, -- total players retained per location 
   total_retained,  -- average retained per location
-  ROUND((avg_paid),2) AS paid,--average IN-game spend per player
+  ROUND((avg_paid),2) AS paid,--average in-game spend per player
  ROUND((100*total_retained / total_players),2) AS perc_retained,--fractional retention
   
 FROM (
@@ -67,7 +67,7 @@ FROM (
       location,
       price AS paid,
       CASE
-        WHEN last_game - joined >30 THEN 1 --finding players who were retained, played a game WITHIN 30 days OF joining
+        WHEN last_game - joined >30 THEN 1 --finding players who were retained, played a game within 30 days OF joining
       ELSE
       0 --will return 0 FOR players outside the 30 day retention
     END
@@ -78,7 +78,7 @@ FROM (
         p.player_id, -- unique player id 
         location, -- location OF players 
         MAX(m.day) AS last_game, -- players play multiple games,will return last game they played 
-        SUM (price) AS price -- sum OF IN-game spends per player
+        SUM (price) AS price -- sum OF in-game spends per player
       FROM
         `juno2110.gamecodata.matches_info` AS m --contains match info for game plays
       JOIN
@@ -102,7 +102,7 @@ FROM (
     location ) --group all columns BY location
 
 Query 3
-  ----ADD TO the daily retention table,average IN-game spends per player
+  ----ADD TO the daily retention table,average in-game spends per player
 SELECT
   date_joined, --day in question
   total_players, --total players joined on day
